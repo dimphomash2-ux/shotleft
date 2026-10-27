@@ -1,0 +1,114 @@
+/* =====================================================================
+   SHO'T LEFT! — GAME FEEL (Phase 5)
+   Fast Mode halves every duration through --sl-speed. Reduce Motion keeps colour, drops movement.
+   ===================================================================== */
+#jz{position:fixed;inset:0;z-index:48;pointer-events:none;overflow:hidden}
+#jz > *{position:absolute;left:0;top:0;will-change:transform,opacity}
+
+/* flying money labels and coins */
+.jz-fly{padding:5px 12px;border:2.5px solid var(--sl-asphalt-900);border-radius:var(--sl-r-full);white-space:nowrap;
+  font:400 18px/22px var(--sl-font-display);text-transform:uppercase;box-shadow:0 3px 0 rgba(27,28,34,.35)}
+.jz-fly.is-up{background:#1E9E57;color:var(--sl-asphalt-900)}
+.jz-fly.is-down{background:var(--sl-red);color:#fff}
+.jz-fly.is-info{background:var(--sl-amber);color:var(--sl-asphalt-900)}
+.jz-coin svg{display:block;width:26px;height:26px}
+.jz-coin.is-lost svg{filter:grayscale(.3)}
+
+/* the player chip reacts when money lands */
+.pc-money{transition:color var(--sl-t-quick)}
+.pc-money.jz-up{color:#13703C!important;animation:jz-num calc(500ms * var(--sl-speed)) var(--sl-ease-spring)}
+.pc-money.jz-down{color:#B3261E!important;animation:jz-num calc(500ms * var(--sl-speed)) var(--sl-ease-spring)}
+@keyframes jz-num{35%{transform:scale(1.22)}}
+.pcard.jz-bump{animation:jz-bump calc(420ms * var(--sl-speed)) var(--sl-ease-spring)}
+@keyframes jz-bump{30%{transform:translateY(-6px) scale(1.04)}}
+.pcard.jz-hurt{animation:jz-hurt calc(420ms * var(--sl-speed)) linear;box-shadow:0 0 0 3px var(--sl-red)}
+@keyframes jz-hurt{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+.pcard .seats.jz-seat{animation:jz-seat calc(500ms * var(--sl-speed)) var(--sl-ease-spring)}
+@keyframes jz-seat{40%{transform:scaleY(2.4);filter:brightness(1.3)}}
+
+/* dust, speed lines, flashes, sparkles */
+.jz-dust{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle,rgba(226,206,170,.95),rgba(205,180,140,.55) 60%,transparent 70%)}
+.jz-speed{position:fixed!important;inset:0;width:100%;height:100%;
+  background:repeating-linear-gradient(176deg,transparent 0 22px,rgba(255,255,255,.55) 22px 24px,transparent 24px 58px);
+  -webkit-mask:radial-gradient(ellipse at center,transparent 38%,#000 75%);mask:radial-gradient(ellipse at center,transparent 38%,#000 75%);
+  animation:jz-speed calc(650ms * var(--sl-speed)) ease-out forwards}
+@keyframes jz-speed{0%{opacity:0;background-position:0 0}25%{opacity:1}100%{opacity:0;background-position:-240px 0}}
+.jz-flash{position:fixed!important;inset:0;width:100%;height:100%;animation:jz-flash calc(650ms * var(--sl-speed)) ease-out forwards}
+.jz-flash.is-bad{box-shadow:inset 0 0 0 6px var(--sl-red),inset 0 0 90px 20px rgba(208,52,42,.55)}
+.jz-flash.is-good{box-shadow:inset 0 0 0 6px #1E9E57,inset 0 0 90px 20px rgba(30,158,87,.5)}
+@keyframes jz-flash{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
+.jz-spark{width:16px;height:16px;background:var(--sl-amber);clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%)}
+.jz-spark:nth-child(3n){background:#fff}
+
+/* speech bubbles (voice captions) */
+.jz-bubble{transform:translate(-50%,-100%);padding:6px 14px;background:#fff;color:var(--sl-asphalt-900);border:3px solid var(--sl-asphalt-900);border-radius:18px;
+  font:400 20px/24px var(--sl-font-display);text-transform:uppercase;white-space:nowrap;box-shadow:0 4px 0 rgba(27,28,34,.3);animation:jz-say calc(260ms * var(--sl-speed)) var(--sl-ease-spring);transition:opacity var(--sl-t-standard)}
+.jz-bubble::after{content:"";position:absolute;left:26px;bottom:-12px;width:16px;height:16px;background:#fff;border:3px solid var(--sl-asphalt-900);border-top:0;border-left:0;transform:rotate(45deg) skew(10deg,10deg);border-radius:0 0 4px 0}
+.jz-bubble.is-out{opacity:0}
+@keyframes jz-say{0%{transform:translate(-50%,-100%) scale(.4)}}
+
+/* road cards: a card back, the flip, the effect chips, the tone */
+:is(#panel,.tu__panel) .ecard.jz-card{position:relative;transform-origin:50% 60%}
+:is(#panel,.tu__panel) .ecard.jz-good{border-top-color:#1E9E57}
+:is(#panel,.tu__panel) .ecard.jz-bad{border-top-color:var(--sl-red)}
+.jz-back{position:absolute;inset:-3px;z-index:3;border-radius:inherit;border:3px solid var(--sl-asphalt-900);opacity:0;pointer-events:none;display:grid;place-items:center;
+  background:repeating-linear-gradient(135deg,var(--sl-amber) 0 14px,#F2A400 14px 28px);transform:scaleX(-1)}
+.jz-back img{width:58%;max-width:150px;filter:drop-shadow(0 3px 0 rgba(27,28,34,.4))}
+:is(#panel,.tu__panel) .ecard.is-flip{animation:jz-flip calc(620ms * var(--sl-speed)) cubic-bezier(.3,.7,.3,1) both}
+:is(#panel,.tu__panel) .ecard.is-flip .jz-back{animation:jz-backface calc(620ms * var(--sl-speed)) steps(1,end) both}
+@keyframes jz-flip{0%{transform:perspective(700px) translateY(60px) rotateY(-180deg) scale(.86);opacity:0}18%{opacity:1;transform:perspective(700px) translateY(0) rotateY(-180deg) scale(.92)}100%{transform:perspective(700px) rotateY(0) scale(1);opacity:1}}
+@keyframes jz-backface{0%{opacity:1}58%{opacity:0}100%{opacity:0}}
+.jz-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.jz-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px 3px 6px;border:2px solid var(--sl-asphalt-900);border-radius:var(--sl-r-full);background:#FFE6A6;
+  font:800 13px/18px var(--sl-font-ui);color:var(--sl-asphalt-900)}
+.jz-chip svg{width:16px;height:16px;flex:none}
+.jz-good .jz-chip{background:#CFEFD9}
+.jz-bad .jz-chip{background:#F7D3CF}
+:is(#panel,.tu__panel) .ecard.jz-shake{animation:jz-shake calc(460ms * var(--sl-speed)) linear}
+@keyframes jz-shake{15%{transform:translateX(-8px) rotate(-1deg)}30%{transform:translateX(7px) rotate(1deg)}45%{transform:translateX(-5px)}60%{transform:translateX(4px)}80%{transform:translateX(-2px)}}
+:is(#panel,.tu__panel) .ecard.jz-good::after{content:"";position:absolute;inset:-4px;border-radius:inherit;pointer-events:none;animation:jz-glow calc(1400ms * var(--sl-speed)) ease-out calc(380ms * var(--sl-speed)) both}
+@keyframes jz-glow{0%{box-shadow:0 0 0 0 rgba(30,158,87,0)}30%{box-shadow:0 0 0 6px rgba(30,158,87,.75),0 0 30px 6px rgba(30,158,87,.55)}100%{box-shadow:0 0 0 0 rgba(30,158,87,0)}}
+
+/* maths answers */
+:is(#panel,.tu__panel) .mq-box.jz-right{animation:jz-right calc(700ms * var(--sl-speed)) ease-out}
+@keyframes jz-right{30%{box-shadow:0 0 0 5px #1E9E57,0 0 26px 4px rgba(30,158,87,.5)}}
+:is(#panel,.tu__panel) .mq-box.jz-wrong{animation:jz-shake calc(460ms * var(--sl-speed)) linear;box-shadow:0 0 0 4px var(--sl-red)}
+:is(#panel,.tu__panel) .mq-box.jz-wrong-still{box-shadow:0 0 0 4px var(--sl-red)}
+
+/* the board shakes on a pothole */
+#board.jz-quake{animation:jz-quake calc(500ms * var(--sl-speed)) linear}
+@keyframes jz-quake{15%{transform:translate(-6px,3px)}30%{transform:translate(5px,-3px)}45%{transform:translate(-4px,2px)}60%{transform:translate(3px,-1px)}80%{transform:translate(-1px,1px)}}
+
+/* home stretch: a golden tint over the city (the UI stays untinted) */
+#jzTint{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 3s ease;mix-blend-mode:soft-light;
+  background:linear-gradient(180deg,rgba(255,150,40,.85),rgba(208,52,42,.55) 70%,rgba(123,91,214,.5))}
+#game.jz-stretch #jzTint{opacity:.75}
+
+/* the fuzzy dice */
+.jz-dice{position:relative;display:flex;flex-direction:column;align-items:center;margin:2px auto 0;width:100%}
+.jz-mirror{width:min(220px,90%);height:auto;display:block}
+.jz-hang{display:flex;flex-direction:column;align-items:center;margin-top:-6px;transform-origin:50% 0}
+.jz-string{display:block;width:3px;height:22px;background:#1B1C22;border-radius:2px}
+.jz-die{margin-top:-4px;filter:drop-shadow(0 5px 0 rgba(27,28,34,.3))}
+.jz-die svg{display:block}
+.jz-hang.is-drop{animation:jz-drop calc(720ms * var(--sl-speed)) ease-out both}
+.jz-hang.is-drop .jz-die{animation:jz-tumble calc(260ms * var(--sl-speed)) linear infinite}
+@keyframes jz-drop{0%{transform:translateY(-70px) rotate(-30deg);opacity:0}25%{transform:translateY(6px) rotate(22deg);opacity:1}45%{transform:translateY(0) rotate(-16deg)}65%{transform:rotate(10deg)}85%{transform:rotate(-5deg)}100%{transform:rotate(3deg)}}
+@keyframes jz-tumble{to{transform:rotate(360deg)}}
+.jz-hang.is-land{animation:jz-land calc(520ms * var(--sl-speed)) var(--sl-ease-spring)}
+@keyframes jz-land{0%{transform:rotate(3deg) translateY(4px)}40%{transform:rotate(-4deg) scale(1.08)}100%{transform:none}}
+.jz-dice.is-cop .jz-die{animation:jz-cop calc(260ms * var(--sl-speed)) steps(2) 4}
+@keyframes jz-cop{0%{filter:drop-shadow(0 0 0 #1A6AAE) drop-shadow(0 0 10px #1A6AAE)}100%{filter:drop-shadow(0 0 0 #D0342A) drop-shadow(0 0 10px #D0342A)}}
+.jz-res{margin:6px 0 0;text-align:center;opacity:0;min-height:52px}
+.jz-res.is-on{opacity:1;animation:jz-num calc(420ms * var(--sl-speed)) var(--sl-ease-spring)}
+.jz-res b{display:block;font:400 34px/38px var(--sl-font-display);text-transform:uppercase;color:var(--sl-asphalt-900)}
+.jz-res small{display:block;font:800 14px/18px var(--sl-font-ui);color:#5A574F}
+.jz-dice.is-cop + .jz-res b{color:var(--sl-red)}
+@media (max-height:420px){.jz-mirror{width:170px}.jz-string{height:14px}.jz-res b{font-size:28px;line-height:32px}.jz-res{min-height:44px}}
+
+/* Reduce Motion: keep the colours, drop the movement */
+html.reduced :is(#panel,.tu__panel) .ecard.is-flip,html.reduced :is(#panel,.tu__panel) .ecard.is-flip .jz-back,html.reduced :is(#panel,.tu__panel) .ecard.jz-shake,html.reduced #board.jz-quake,
+html.reduced .jz-hang,html.reduced .jz-hang .jz-die,html.reduced .pcard.jz-hurt,html.reduced .pcard.jz-bump,html.reduced .jz-bubble,html.reduced .jz-res.is-on,
+html.reduced .pc-money.jz-up,html.reduced .pc-money.jz-down,html.reduced .pcard .seats.jz-seat,html.reduced :is(#panel,.tu__panel) .mq-box.jz-wrong{animation:none!important}
+html.reduced .jz-back{display:none}
+html.reduced #jzTint{transition:none}

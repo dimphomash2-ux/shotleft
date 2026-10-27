@@ -1,0 +1,7 @@
+shots/
+dist/
+android-app/www/
+android-app/node_modules/
+android-app/android/
+android-app/keystore.properties
+*.jks

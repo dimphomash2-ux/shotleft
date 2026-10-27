@@ -1,0 +1,27 @@
+{
+  "name": "shotleft-android",
+  "version": "2.17.0",
+  "private": true,
+  "description": "Sho't Left! — the minibus taxi board game (Android app shell). The game itself is www/index.html, made by ../build.py.",
+  "scripts": {
+    "web": "cd .. && python3 build.py",
+    "sync": "npm run web && npx cap sync android",
+    "release-config": "node scripts/apply-release-config.mjs",
+    "bundle": "cd android && ./gradlew bundleRelease",
+    "apk": "cd android && ./gradlew assembleRelease",
+    "open": "npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "latest",
+    "@capacitor/app": "latest",
+    "@capacitor/core": "latest",
+    "@capacitor/filesystem": "latest",
+    "@capacitor/haptics": "latest",
+    "@capacitor/share": "latest",
+    "@capacitor-community/in-app-review": "latest",
+    "cordova-plugin-purchase": "^13.13.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "latest"
+  }
+}

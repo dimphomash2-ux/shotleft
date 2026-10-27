@@ -1,0 +1,113 @@
+/* =====================================================================
+   SHO'T LEFT! — HOW TO PLAY + TUTORIAL (Phase 6)
+   ===================================================================== */
+/* the hub */
+#help.ht{display:flex!important;flex-direction:column}
+#help.ht[hidden]{display:none!important}
+#helpBody{flex:1;min-height:0;display:flex;flex-direction:column;gap:var(--sl-s3);width:100%;max-width:1100px;margin:0 auto;
+  padding:var(--sl-s3) calc(var(--sl-margin) + env(safe-area-inset-right,0px)) 0 calc(var(--sl-margin) + env(safe-area-inset-left,0px))}
+.ht__tabs{align-self:flex-start;flex-wrap:wrap}
+.ht__tabs button[aria-selected="true"]{background:var(--sl-amber);box-shadow:inset 0 0 0 2px var(--sl-asphalt-900)}
+.ht__pane{flex:1;min-height:0;overflow-y:auto;padding-bottom:calc(var(--sl-s6) + env(safe-area-inset-bottom,0px));scrollbar-width:thin}
+.ht__learn{display:flex;align-items:center;gap:var(--sl-s5);padding:var(--sl-s4);background:#fff;border:var(--sl-outline);border-radius:var(--sl-r-card);box-shadow:var(--sl-shadow-1)}
+.ht__learn h2{margin:0 0 4px}
+.ht__learn .t-body{margin:0 0 var(--sl-s2)}
+.ht__ms{flex:none}
+.ht__steps{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 var(--sl-s3);padding:0;list-style:none;counter-reset:s}
+.ht__steps li{counter-increment:s;padding:4px 10px 4px 4px;border:2px solid var(--sl-asphalt-900);border-radius:var(--sl-r-full);font:800 13px/18px var(--sl-font-ui);background:var(--sl-taxi-white)}
+.ht__steps li::before{content:counter(s);display:inline-grid;place-items:center;width:20px;height:20px;margin-right:6px;border-radius:50%;background:var(--sl-amber);font:400 12px/1 var(--sl-font-display)}
+.ht__search{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:8px;padding:0 var(--sl-s3);height:48px;margin-bottom:var(--sl-s3);background:#fff;border:var(--sl-outline);border-radius:var(--sl-r-btn)}
+.ht__search svg{width:22px;height:22px;flex:none;color:#5A574F}
+.ht__search input{flex:1;min-width:0;height:100%;border:0;background:transparent;font:700 16px/20px var(--sl-font-ui);color:var(--sl-asphalt-900);outline:none;user-select:text;-webkit-user-select:text}
+.ht__rule{display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:var(--sl-s4);align-items:start;padding:var(--sl-s3);margin-bottom:var(--sl-s3);background:#fff;border:var(--sl-outline);border-radius:var(--sl-r-card);box-shadow:var(--sl-shadow-1)}
+.ht__rule:not(:has(.ht__art)){grid-template-columns:1fr}
+.ht__art .hp-art{display:block;width:100%;height:auto;border-radius:12px}
+.ht__txt h3{margin:2px 0 6px;font:400 20px/24px var(--sl-font-display);text-transform:uppercase}
+.ht__txt p,.ht__txt li{font:600 15px/22px var(--sl-font-ui);color:#2E3039;margin:0 0 6px}
+.ht__txt .hp-big{font:800 16px/22px var(--sl-font-ui);color:var(--sl-asphalt-900)!important;background:#FFF3D1!important;border-color:var(--sl-amber)!important}
+.ht__txt .hp-big b{color:#7A4E00!important}
+.ht__txt .muted{color:#5A574F}
+.ht__txt .hp-steps,.ht__txt .hp-list{margin:0 0 6px;padding-left:20px}
+.ht__txt .hp-signs{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin:4px 0 8px}
+.ht__txt .hp-sign{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px;background:#2E3039;border-radius:12px;color:#fff}
+.ht__txt .hp-sign svg{width:72px;height:auto}
+.ht__txt .hp-sign b{font:800 13px/16px var(--sl-font-ui)}
+.ht__txt .rp-btn{margin-top:4px}
+.ht__none{font:700 15px/22px var(--sl-font-ui);color:#5A574F;padding:var(--sl-s4) 0}
+.ht__lead{margin:0 0 var(--sl-s2)}
+.ht__h{margin:var(--sl-s4) 0 var(--sl-s2);font:400 18px/22px var(--sl-font-display);text-transform:uppercase}
+.ht__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:var(--sl-s2)}
+.ht__card{position:relative;display:flex;flex-direction:column;gap:4px;padding:var(--sl-s2) var(--sl-s3) var(--sl-s3);background:#fff;border:var(--sl-outline);border-top:10px solid var(--sl-amber);border-radius:14px;box-shadow:var(--sl-shadow-1)}
+.ht__card.jz-good{border-top-color:#1E9E57}.ht__card.jz-bad{border-top-color:var(--sl-red)}.ht__card.jz-fun{border-top-color:var(--sl-amber)}
+.ht__card--pax{border-top-color:var(--sl-sky)}
+.ht__card b{font:400 15px/19px var(--sl-font-display);text-transform:uppercase}
+.ht__card p{margin:0;font:600 13px/18px var(--sl-font-ui);color:#2E3039}
+.ht__card .jz-chips{margin-top:4px}
+.ht__card.is-locked{background:#F4F1EA}
+.ht__card .rp-lock{position:absolute;top:6px;right:6px;font-size:10px;padding:1px 6px 1px 3px}
+.ht__card .rp-lock svg{width:12px;height:12px}
+.ht__card.is-locked b{padding-right:86px}
+.ht__slang{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:var(--sl-s2);margin:0}
+.ht__slang div{padding:var(--sl-s2) var(--sl-s3);background:#fff;border:var(--sl-outline);border-radius:14px}
+.ht__slang dt{font:400 18px/22px var(--sl-font-display);text-transform:uppercase;color:var(--sl-asphalt-900)}
+.ht__slang dd{margin:2px 0 0;font:600 14px/20px var(--sl-font-ui);color:#2E3039}
+@media (max-width:640px){.ht__rule{grid-template-columns:1fr}.ht__learn{flex-direction:column;text-align:center}.ht__steps{justify-content:center}}
+@media (max-height:420px){.ht__learn{padding:var(--sl-s3)}.ht__ms .ms{width:96px;height:auto}}
+
+/* the tutorial */
+#tutorial.tu{display:flex!important;flex-direction:column;padding:0!important;background:linear-gradient(90deg,rgba(27,28,34,.55),rgba(27,28,34,.15) 60%,rgba(27,28,34,.05));color:var(--sl-asphalt-900)}
+#tutorial.tu[hidden]{display:none!important}
+#tutorial .shs__bar{background:var(--sl-taxi-white)}
+.tu__dots{display:flex;gap:6px}
+.tu__dots i{width:12px;height:12px;border-radius:50%;border:2px solid var(--sl-asphalt-900);background:#fff}
+.tu__dots i.is-on{background:var(--sl-amber);transform:scale(1.2)}.tu__dots i.is-done{background:var(--sl-asphalt-900)}
+.tu__body{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:var(--sl-s4);align-items:center;
+  padding:var(--sl-s3) calc(var(--sl-margin) + env(safe-area-inset-right,0px)) calc(var(--sl-s3) + env(safe-area-inset-bottom,0px)) calc(var(--sl-margin) + env(safe-area-inset-left,0px))}
+.tu__coach{display:flex;align-items:flex-end;gap:var(--sl-s2)}
+.tu__coach .ms{flex:none;filter:drop-shadow(0 4px 0 rgba(0,0,0,.3))}
+.tu__say{position:relative;flex:1;min-width:0;margin-bottom:46px;padding:var(--sl-s3) var(--sl-s4);background:#fff;border:3px solid var(--sl-asphalt-900);border-radius:20px;box-shadow:0 5px 0 rgba(27,28,34,.3);animation:jz-say calc(260ms * var(--sl-speed)) var(--sl-ease-spring)}
+.tu__say::before{content:"";position:absolute;left:-12px;bottom:18px;width:18px;height:18px;background:#fff;border-left:3px solid var(--sl-asphalt-900);border-bottom:3px solid var(--sl-asphalt-900);transform:rotate(45deg)}
+.tu__say .t-label{color:#B07A00;letter-spacing:.12em}
+.tu__say p{margin:2px 0 0;font:800 17px/24px var(--sl-font-ui)}
+.tu__panel{position:relative;display:flex;flex-direction:column;gap:var(--sl-s2);padding:var(--sl-s3);background:var(--sl-taxi-white);border:var(--sl-outline);border-radius:var(--sl-r-card);box-shadow:var(--sl-shadow-2);font:600 15px/21px var(--sl-font-ui)}
+.tu__money{display:flex;justify-content:space-between;align-items:center;padding:0 2px}
+.tu__money span{font:800 12px/16px var(--sl-font-ui);letter-spacing:.1em;text-transform:uppercase;color:#5A574F}
+.tu__money b{font:400 22px/26px var(--sl-font-display);font-variant-numeric:tabular-nums}
+.tu__money b.jz-up{color:#13703C;animation:jz-num calc(500ms * var(--sl-speed)) var(--sl-ease-spring)}
+.tu__card{display:flex;flex-direction:column;gap:8px}
+.tu__card h2{display:flex;align-items:center;gap:8px;margin:0;font:400 20px/24px var(--sl-font-display);text-transform:uppercase}
+.tu__card h2 .rp-chip__badge{width:30px;height:30px;border-radius:8px}
+.tu__card .t-caption{margin:0}
+.tu__race{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--sl-s3);align-items:center}
+.tu__sign{display:flex;flex-direction:column;align-items:center;padding:8px;background:var(--sl-asphalt-900);color:#fff;border-radius:14px;text-align:center}
+.tu__sign > b{font:400 26px/30px var(--sl-font-display);text-transform:uppercase;color:var(--sl-amber)}
+.tu__sign .t-label{color:#C9C4B8}
+.tu__hand .hp-sign{display:flex;flex-direction:column;align-items:center}.tu__hand svg{width:84px;height:auto}.tu__hand b{display:none}
+.tu__who{display:flex;flex-direction:column;gap:8px}
+.tu__who .t-caption{margin:0}
+.tu__p.is-picked{background:var(--sl-amber)!important}
+.tu__gears .gear{min-height:96px!important}
+.tu__ok{align-self:stretch}
+.tu__panel .mq-box{display:flex;flex-direction:column;gap:8px;padding:10px}
+.tu__panel .answers{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.tu__panel .jz-dice{margin-top:4px}
+.tu__end{display:flex;flex-direction:column;gap:var(--sl-s2);padding:var(--sl-s2)}
+.tu__end h2,.tu__end p{margin:0}
+.tu__endbtns{display:flex;flex-wrap:wrap;gap:var(--sl-s2);align-items:center}
+.tu__endbtns .rp-btn:first-child{flex:1 1 100%}
+/* the ghost finger: glides to the thing to tap, then taps it */
+.tu__finger{position:fixed;z-index:60;width:46px;height:58px;pointer-events:none;transform:translate(-30%,-8%);filter:drop-shadow(0 4px 0 rgba(0,0,0,.35))}
+.tu__finger svg{display:block;width:100%;height:100%}
+.tu__finger::after{content:"";position:absolute;left:30%;top:4%;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;border:3px solid var(--sl-amber);opacity:0;animation:tu-ring calc(1100ms * var(--sl-speed)) ease-out infinite}
+.tu__finger.is-in{animation:tu-in calc(500ms * var(--sl-speed)) var(--sl-ease-out) both,tu-tap calc(1100ms * var(--sl-speed)) ease-in-out calc(500ms * var(--sl-speed)) infinite}
+@keyframes tu-in{0%{opacity:0;transform:translate(10%,40%) scale(1.2)}100%{opacity:1;transform:translate(-30%,-8%)}}
+@keyframes tu-tap{0%,100%{transform:translate(-30%,-8%)}40%{transform:translate(-30%,-2%) scale(.92)}}
+@keyframes tu-ring{0%,35%{opacity:0;transform:scale(.4)}45%{opacity:1}100%{opacity:0;transform:scale(1.8)}}
+html.reduced .tu__finger,html.reduced .tu__finger.is-in{animation:none!important}
+html.reduced .tu__finger::after{animation:none;opacity:1}
+@media (max-height:420px){
+  .tu__body{padding-top:var(--sl-s2);gap:var(--sl-s3)}.tu__coach .ms{width:84px;height:auto}.tu__say{margin-bottom:30px;padding:var(--sl-s2) var(--sl-s3)}.tu__say p{font-size:15px;line-height:21px}
+  .tu__panel{padding:var(--sl-s2)}.tu__gears .gear{min-height:84px!important}.tu__hand svg{width:64px}
+  #tutorial .shs__bar h1{display:none}
+}
+@media (max-width:700px){.tu__body{grid-template-columns:1fr;align-content:start;overflow-y:auto}.tu__coach .ms{width:80px;height:auto}}
