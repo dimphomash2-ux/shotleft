@@ -23,7 +23,8 @@ jobs:
       - name: Install the app shell
         working-directory: android-app
         run: |
-          npm install
+          (cd .. && python3 build.py)
+          npm install --no-audit --no-fund --legacy-peer-deps
           npx cap add android
           npm run release-config
           npm run sync
