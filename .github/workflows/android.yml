@@ -22,12 +22,11 @@ jobs:
           "$SDK/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;36.0.0" > /dev/null
       - name: Install the app shell
         working-directory: android-app
+        shell: bash
         run: |
-          (cd .. && python3 build.py)
-          npm install --no-audit --no-fund --legacy-peer-deps
-          npx cap add android
-          npm run release-config
-          npm run sync
+          set -o pipefail
+          report() { echo "::error title=$1::$(tail -n 40 "$2" | sed -e 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g')"; }
+          { (cd .. && python3 build.py) && npm install --no-audit --no-fund --legacy-peer-deps && npx cap add android && npm run release-config && npm run sync; } 2>&1 | tee /tmp/install.log || { report install /tmp/install.log; exit 1; }
       - name: Signing key (only when the secrets are set)
         if: env.HAS_KEY == 'true'
         env: { KS: "${{ secrets.UPLOAD_KEYSTORE_BASE64 }}" }
@@ -37,7 +36,10 @@ jobs:
           printf "storeFile=../../shotleft-upload.jks\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n" "${{ secrets.UPLOAD_STORE_PASSWORD }}" "${{ secrets.UPLOAD_KEY_ALIAS }}" "${{ secrets.UPLOAD_KEY_PASSWORD }}" > keystore.properties
       - name: Test APK (installs on any phone)
         working-directory: android-app/android
-        run: ./gradlew assembleDebug
+        shell: bash
+        run: |
+          set -o pipefail
+          ./gradlew assembleDebug --no-daemon 2>&1 | tee /tmp/gradle.log || { echo "::error title=gradle::$(grep -E 'error|Error|FAILURE|What went wrong' -A3 /tmp/gradle.log | tail -n 40 | sed -e 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g')"; exit 1; }
       - name: Signed release APK + AAB (when signing is set)
         if: env.HAS_KEY == 'true'
         working-directory: android-app/android
