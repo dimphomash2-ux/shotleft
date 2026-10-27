@@ -2,7 +2,7 @@
 
 ## 1. One-time setup (your computer)
 
-1. Install Node.js 20+, Android Studio with **Android SDK 36** (SDK Manager › Android 16), and JDK 21.
+1. Install Node.js 22+, Android Studio with **Android SDK 36** (SDK Manager › Android 16), and JDK 21.
 2. In `android-app/`:
    ```bash
    npm install
