@@ -1,5 +1,30 @@
 # Sho't Left — Changelog
 
+## 2.18.0 — Motion direction (27 Oct 2026)
+Presentation only: rules, money, dice and positions are unchanged. Fast Mode scales the timings. Reduce Motion turns all of this off. The plan, with the options weighed for each moment, is in `MOTION.md`.
+- **Camera**: a critically damped spring on every axis, so it never stops dead between moves.
+  - Long flights to the next driver crane up and back over the city, then settle in behind the taxi.
+  - While driving it chases with look-ahead, pulls back slightly and widens with speed.
+  - The idle board still settles to a cached still frame.
+- **Taxi weight**:
+  - the tail squats as the engine revs on launch, and the nose lifts
+  - the body rolls out of corners on an underdamped spring, so it swings back past upright once
+  - the nose dives into the brake, and the suspension rebounds and settles
+- **Overtakes**: the taxi swings out to the right lane to pass, then tucks back in. The parked taxi rocks in its wash.
+- **Speed streaks**: in high gear, road-level trails follow the curve behind the taxi. They're off on Low graphics.
+- **Pothole**: a decaying 3D camera jolt replaces the CSS shake, which used to show the canvas edge.
+- **Fuzzy dice**: a real damped pendulum. The face flicker slows as the swing settles, and the die squashes when it lands on the result.
+- **Turn banner**: the plate drives in skewed like motion blur, brakes with an overshoot, and its letters settle one by one. Then it pulls off.
+- **Win**: a slow orbit around the winning taxi under the confetti. It stops on the next game or the board view.
+- **Sound in step with motion**:
+  - a launch rev
+  - brake squeal and tyre dust on the stop
+  - engine pitch and brightness follow the taxi's real speed every frame
+- **Verified**:
+  - frame-by-frame review at 60 fps on a fake clock, at 1280×720 and 844×390
+  - full games in normal, Fast and Reduce Motion modes, with no errors
+  - the idle board settles to its cache
+
 ## 2.17.0 (release prep, Phase 10) — 27 Oct 2026
 - **Android back**: in the Capacitor app, the system back gesture goes through the game's back map (Capacitor App `backButton`, an OnBackPressedCallback), so predictive back on Android 16 works and never exits by accident.
 - **Release config script** (`android-app/scripts/apply-release-config.mjs`, run with `npm run release-config`). Safe to run again: a second run changes nothing. Tested on the standard Capacitor template files. It sets:

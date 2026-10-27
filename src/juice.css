@@ -112,3 +112,20 @@ html.reduced .jz-hang,html.reduced .jz-hang .jz-die,html.reduced .pcard.jz-hurt,
 html.reduced .pc-money.jz-up,html.reduced .pc-money.jz-down,html.reduced .pcard .seats.jz-seat,html.reduced :is(#panel,.tu__panel) .mq-box.jz-wrong{animation:none!important}
 html.reduced .jz-back{display:none}
 html.reduced #jzTint{transition:none}
+
+/* =====================================================================
+   2.18 motion: the turn banner drives in like a taxi, brakes, then pulls off
+   ===================================================================== */
+#banner.show{animation:jz-ban calc(2300ms * var(--sl-speed)) linear forwards}
+@keyframes jz-ban{
+  0%{opacity:0;transform:translateX(-50%) translateX(-58vw) skewX(-22deg)}
+  12%{opacity:1;transform:translateX(-50%) translateX(18px) skewX(9deg) scaleX(.94)}
+  19%{transform:translateX(-50%) translateX(-5px) skewX(-3deg) scaleX(1.02)}
+  25%,80%{opacity:1;transform:translateX(-50%)}
+  100%{opacity:0;transform:translateX(-50%) translateX(46vw) skewX(-16deg)}}
+#banner .bw{display:inline-block;white-space:nowrap}
+#banner .bt i{display:inline-block;font-style:normal;animation:jz-let calc(420ms * var(--sl-speed)) cubic-bezier(.2,.9,.3,1.25) calc((140ms + var(--i) * 18ms) * var(--sl-speed)) both}
+@keyframes jz-let{0%{opacity:0;transform:translateX(-16px) skewX(-24deg) scaleX(1.4)}60%{opacity:1}100%{opacity:1;transform:none}}
+#banner .bs{animation:jz-let calc(420ms * var(--sl-speed)) ease-out calc(380ms * var(--sl-speed)) both}
+html.reduced #banner.show{animation:ban 2.1s ease forwards}
+html.reduced #banner .bt i,html.reduced #banner .bs{animation:none}

@@ -1,6 +1,6 @@
 {
   "name": "shotleft-android",
-  "version": "2.17.0",
+  "version": "2.18.0",
   "private": true,
   "description": "Sho't Left! — the minibus taxi board game (Android app shell). The game itself is www/index.html, made by ../build.py.",
   "scripts": {

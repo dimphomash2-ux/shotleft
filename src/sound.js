@@ -60,6 +60,8 @@ const Sound = (() => {
     step() { for (let i = 0; i < 4; i++) noise(0.04, 0.12, i * 0.13, 2500, 3); },
     ignition() { noise(0.5, 0.12, 0, 180, 0.8, "lowpass"); tone(55, 0.6, "sawtooth", 0.06, 0.1); },
     blip(high) { tone(high ? 120 : 95, 0.09, "sawtooth", 0.05, 0, null, high ? 160 : 120); noise(0.05, 0.05, 0, 400, 1, "lowpass"); },
+    rev(high) { tone(58, 0.34, "sawtooth", 0.07, 0, null, high ? 150 : 115); noise(0.3, 0.06, 0, 260, 0.8, "lowpass"); },
+    brake() { tone(1750, 0.26, "triangle", 0.022, 0.02, null, 1350); noise(0.3, 0.07, 0, 3400, 5, "bandpass", null, 2200); noise(0.18, 0.06, 0, 300, 0.7, "lowpass"); },
     whoosh() { noise(0.45, 0.28, 0, 400, 1.4, "bandpass", null, 3200); noise(0.3, 0.12, 0.12, 2400, 1, "highpass"); },
     bump() { tone(70, 0.25, "sine", 0.3); noise(0.15, 0.2, 0, 300, 0.7, "lowpass"); },
     whistle() { tone(2300, 0.18, "sine", 0.12); tone(2300, 0.38, "sine", 0.12, 0.24); },
@@ -242,11 +244,16 @@ const Sound = (() => {
   function engine(on, high) {   // a soft idling engine while the taxi moves
     if (!ac) return;
     if (!on) { if (engineNode) { const e = engineNode; e.g.gain.setTargetAtTime(0.0001, now(), 0.12); setTimeout(() => { try { e.o.stop(); e.lfo.stop(); } catch {} }, 500); engineNode = null; } return; }
-    if (engineNode) { engineNode.o.frequency.setTargetAtTime(high ? 78 : 52, now(), 0.3); return; }
+    if (engineNode) { engineNode.base = high ? 78 : 52; engineNode.o.frequency.setTargetAtTime(engineNode.base, now(), 0.3); return; }
     const o = ac.createOscillator(), g = ac.createGain(), f = ac.createBiquadFilter(), lfo = ac.createOscillator(), lg = ac.createGain();
     o.type = "sawtooth"; o.frequency.value = high ? 78 : 52; f.type = "lowpass"; f.frequency.value = 380; lfo.frequency.value = 14; lg.gain.value = 6;
     lfo.connect(lg); lg.connect(o.frequency); o.connect(f); f.connect(g); g.connect(sfxBus); g.gain.value = 0.0001; g.gain.setTargetAtTime(0.06, now(), 0.15);
-    o.start(); lfo.start(); engineNode = { o, g, lfo };
+    o.start(); lfo.start(); engineNode = { o, g, lfo, f, base: o.frequency.value };
+  }
+  let rpmLast = -1;
+  function rpm(amt) {   // engine pitch and brightness follow the taxi's real speed on screen
+    if (!ac || !engineNode || Math.abs(amt - rpmLast) < 0.03) return; rpmLast = amt;
+    const t = now(); engineNode.o.frequency.setTargetAtTime(engineNode.base + amt * 46, t, 0.06); engineNode.f.frequency.setTargetAtTime(380 + amt * 520, t, 0.08);
   }
   load();
   const safe = f => (...a) => { try { if (ac && !vol.muted) return f(...a); } catch {} };
@@ -254,7 +261,7 @@ const Sound = (() => {
     unlock, suspend(on) { try { if (ac) on ? ac.suspend() : ac.resume(); } catch {} },
     fx: new Proxy(fx, { get: (o, k) => safe(o[k] || (() => {})) }),
     voice: safe(voice), VOICE, duck: safe(duck),
-    engine, music, final: Music.final, stinger: safe(Music.stinger), get musicMode() { return Music.mode; },
+    engine, rpm: safe(rpm), music, final: Music.final, stinger: safe(Music.stinger), get musicMode() { return Music.mode; },
     vol, set(k, v) { vol[k] = v; apply(); save(); },
   };
 })();

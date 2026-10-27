@@ -133,11 +133,13 @@ const Juice = (() => {
     const hang = $("#panel .jz-hang"), die = $("#jzDie"), res = $("#jzRes");
     Sound.fx.diceShake(); haptic("light");
     if (!reduced()) {
-      hang.classList.add("is-drop");
-      let f = 0; const end = performance.now() + 720 * k();
-      while (performance.now() < end) { let n; do n = 1 + Math.floor(Math.random() * 6); while (n === f); f = n; die.innerHTML = SLDS.die(P, f, dieSize); await new Promise(r => setTimeout(r, 80)); }
+      const T = 1150 * k(); swing(hang, T);
+      die.animate([{ transform: "rotate(0)" }, { transform: "rotate(720deg)" }], { duration: T * 0.58, easing: "cubic-bezier(.2,.7,.35,1)" });
+      let f = 0, gap = 48; const end = performance.now() + T * 0.56;
+      while (performance.now() < end) { let n; do n = 1 + Math.floor(Math.random() * 6); while (n === f); f = n; die.innerHTML = SLDS.die(P, f, dieSize); await new Promise(r => setTimeout(r, gap)); gap *= 1.2; }
     } else await hold(250);
-    die.innerHTML = SLDS.die(P, ev.face, dieSize); hang.classList.remove("is-drop"); hang.classList.add("is-land");
+    die.innerHTML = SLDS.die(P, ev.face, dieSize);
+    if (!reduced()) die.animate([{ transform: "rotate(0) scale(1.2,.84)" }, { transform: "scale(.94,1.08)", offset: 0.45 }, { transform: "none" }], { duration: 380 * k(), easing: "ease-out" });
     Sound.fx.diceLand(); haptic("medium");
     const copSafe = !ev.cop && ev.face === SL_CONFIG.die.copFace && ev.gear === "low" && Engine.rules(G).police !== "off";
     res.innerHTML = `<b>${esc(STR.diceSpaces(ev.n))}</b><small>${esc(ev.cop ? STR.diceCop(ev.face) : copSafe ? STR.diceCopLow : ev.gear === "low" ? STR.diceHalved(ev.face, ev.n) : STR.diceFull(ev.face))}</small>`;
@@ -145,6 +147,18 @@ const Juice = (() => {
     const eb = $("#panel .eyebrow"); if (eb) eb.textContent = ev.gear === "high" ? STR.diceHighDone : STR.diceLowDone;
     res.classList.add("is-on");
     await hold(ev.cop ? 900 : 650);   // the result stays big and clear before the taxi moves
+  }
+
+  // a fuzzy die on a string: drops in, overshoots, then swings as a damped pendulum (the angle and the drop are one curve)
+  function swing(el, T) {
+    const fr = [], N = 40;
+    for (let i = 0; i <= N; i++) {
+      const u = i / N, t = u * T / 1000, drop = u < 0.16 ? -70 * Math.pow(1 - u / 0.16, 2) : u < 0.3 ? 7 * Math.sin((u - 0.16) / 0.14 * Math.PI) : 0;
+      const ang = 34 * Math.exp(-3.4 * t) * Math.cos(2 * Math.PI * 1.55 * t + 0.35) * Math.min(1, u / 0.1 + 0.4);
+      fr.push({ transform: `translateY(${drop.toFixed(1)}px) rotate(${ang.toFixed(2)}deg)`, opacity: u < 0.08 ? u / 0.08 : 1, offset: u });
+    }
+    fr[N].transform = "none";
+    el.animate(fr, { duration: T, easing: "linear", fill: "none" });
   }
 
   // ---------------- road cards: the deck slides up, the card flips, good glows green, bad flashes red ----------------
@@ -193,7 +207,7 @@ const Juice = (() => {
     if (right) say("sharp", G.turn);
   }
   function caught(ok) { if (ok) { haptic("medium"); say("sharp", G.turn); } else { haptic("heavy"); say("eish", G.turn); } }
-  function bump() { haptic("heavy"); if (!reduced()) pop(document.getElementById("board"), "jz-quake", 520); }
+  function bump() { haptic("heavy"); if (reduced()) return; if (R3.shake) R3.shake(0.42); else pop(document.getElementById("board"), "jz-quake", 520); }
 
   // ---------------- voice lines + captions: at most one every 3 turns, never the same twice in a row ----------------
   let turnNo = 0, lastTurn = -9, lastId = null;
@@ -225,6 +239,7 @@ const Juice = (() => {
   function win() {
     Sound.stinger(); setTimeout(() => Sound.fx.crowd(), 500); haptic("success"); say("ayeye", null, true);
     if (reduced()) return;
+    if (R3.orbit) R3.orbit(true);
     const cols = SLDS.PLAYERS.map(p => p.hex).concat(["#FFB300", "#7B5BD6"]);
     for (let i = 0; i < 60; i++) {
       const c = document.createElement("i"); c.className = "rp-confetti";
@@ -233,6 +248,11 @@ const Juice = (() => {
       c.style.setProperty("--d", Math.round((1300 + Math.random() * 1000) * k()) + "ms");
       c.style.animationDelay = Math.random() * 400 + "ms"; document.body.appendChild(c); setTimeout(() => c.remove(), 3200);
     }
+  }
+  if (R3.hooks) {
+    R3.hooks.launch = high => { Sound.fx.rev(high === "high"); haptic("light"); };
+    R3.hooks.speed = amt => Sound.rpm(amt);
+    R3.hooks.brake = pi => { Sound.fx.brake(); haptic("light"); if (!reduced()) { dust(pi); setTimeout(() => dust(pi), 90); } };
   }
   function reset() { turnNo = 0; lastTurn = -9; lastId = null; pend = {}; }
 

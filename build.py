@@ -5,7 +5,7 @@ import base64, pathlib, re, sys
 ROOT = pathlib.Path(__file__).parent
 FONTS = ROOT / "fonts"
 src = (ROOT / "original-2.9.1.html").read_text()
-VERSION = "2.17.0"
+VERSION = "2.18.0"
 
 def b64(p, mime): return f"data:{mime};base64," + base64.b64encode(p.read_bytes()).decode()
 def read(p): return (ROOT / p).read_text()
@@ -256,6 +256,36 @@ once('<div id="game">', f'<style id="sl-polish">\n{read("src/polish.css")}\n</st
 # wording: "1 fare", not "1 fares"; the gogo quirk always goes to a gogo (it used to land on any name, e.g. "Sbu")
 once('const show = v => (g.unit === "R" ? R$(v) : g.unit === "name" ? v : `${v} ${g.unit}`);', 'const show = v => (g.unit === "R" ? R$(v) : g.unit === "name" ? v : `${v} ${v === 1 ? g.unit.replace(/s$/, "") : g.unit}`);')
 once('if (q.id === "pastor") name = "Pastor Khumalo";', 'if (q.id === "pastor") name = "Pastor Khumalo";\n    if (q.id === "gogo") name = "Gogo Zodwa";')
+
+# ===================== Phase 11: motion direction (see MOTION.md) =====================
+def times(old, new, n):
+    global src
+    c = src.count(old)
+    if c != n: sys.exit(f"build: expected {n} matches, found {c}: {old[:80]!r}")
+    src = src.replace(old, new)
+# spring camera, crane flights, shake, orbit and speed streaks live inside the renderer
+once('  function frame(now) {\n', read("src/r3-motion.js") + '  function frame(now) {\n')
+once("""    const k = reduced ? 1 : 1 - Math.exp(-dt * 4.2);
+    for (const key of ["tx", "ty", "pitch", "dist"]) cam[key] = lerp(cam[key], want[key], k);
+    cam.yaw += angDiff(cam.yaw, want.yaw) * k;""", """    const k = reduced ? 1 : 1 - Math.exp(-dt * 4.2);
+    camStep(dt);""")
+once('const yaw = cam.yaw + user.yaw, pitch = clamp(cam.pitch + user.pitch, 0.5, 1.25), d = cam.dist * user.zoom;',
+     'const yaw = cam.yaw + user.yaw, pitch = clamp(cam.pitch + user.pitch + MO.crane * 0.006 + MO.rp, 0.5, 1.3), d = (cam.dist + MO.crane) * user.zoom;')
+once('const C = V(cam.tx + o.x, cam.ty + o.y, o.z), f = norm(V(-o.x, -o.y, -o.z))', 'const C = V(cam.tx + MO.sx + o.x, cam.ty + MO.sy + o.y, o.z), f = norm(V(-o.x, -o.y, -o.z))')
+once('/ Math.tan(cam.fov / 2) };', '/ Math.tan((cam.fov + MO.fov) / 2) };')
+once('Math.abs(angDiff(cam.yaw, want.yaw)) > 0.002;\n    const interval', 'Math.abs(angDiff(cam.yaw, want.yaw)) > 0.002 || camMoving();\n    const interval')
+once('const key = [cam.tx, cam.ty, cam.yaw, cam.pitch, cam.dist, user.yaw, user.pitch, user.zoom, cx, cy]', 'const key = [cam.tx, cam.ty, cam.yaw, cam.pitch, cam.dist, user.yaw, user.pitch, user.zoom, cx, cy, MO.crane, MO.sx, MO.sy, MO.rp, MO.fov]')
+once('    drawLabels();\n  }\n  function policeCarFaces', '    drawStreaks();\n    drawLabels();\n  }\n  function policeCarFaces')
+# the taxi body rolls on its suspension (both taxi builders)
+times('const T = (x, y, z) => { const x1 = x * cp - (z - 0.5) * sp, z1 = x * sp + (z - 0.5) * cp + 0.5; return V(t.x + x1 * c - y * s, t.y + x1 * s + y * c, z1 + t.bounce); };',
+      'const cr_ = Math.cos(t.roll || 0), sr_ = Math.sin(t.roll || 0), T = (x, y, z) => { const x1 = x * cp - (z - 0.5) * sp, z0 = x * sp + (z - 0.5) * cp + 0.5, y1 = y * cr_ - (z0 - 0.2) * sr_, z1 = y * sr_ + (z0 - 0.2) * cr_ + 0.2; return V(t.x + x1 * c - y1 * s, t.y + x1 * s + y1 * c, z1 + t.bounce); };', 2)
+# a new turn or the overview stops the win orbit
+once('function overview(instant) { Object.assign(want,', 'function overview(instant) { MO.orbit = 0; Object.assign(want,')
+once('  function syncTaxis(players, active) {\n', '  function syncTaxis(players, active) {\n    MO.orbit = 0;\n')
+once('syncTaxis, drive, reverse, door, board, alight, waiting, bump, idleStart, police, taxiPos,', 'syncTaxis, drive, reverse, door, board, alight, waiting, bump, idleStart, police, taxiPos, shake, orbit, hooks,')
+once('_debug: { LEN,', '_debug: { taxis, MO, camV, LEN,')
+# the turn banner's letters settle one by one
+once('const b = $("#banner"); b.innerHTML = `<div class="bt">${esc(title)}</div>', 'const b = $("#banner"); let li = 0; b.innerHTML = `<div class="bt">${String(title).split(" ").map(w => `<span class="bw">${[...w].map(ch => `<i style="--i:${li++}">${esc(ch)}</i>`).join("")}</span>`).join(" ")}</div>')
 
 # modules: strings, design-system helpers + Style Guide, shell; then boot through the shell
 once('// boot\nR3.init(', read("src/strings.js") + "\n" + read("src/styleguide.js") + "\n" + read("src/shell.js") + "\n" + read("src/setup.js") + "\n" + read("src/ingame.js") + "\n" + read("src/juice.js") + "\n" + read("src/results.js") + "\n" + read("src/learn.js") + "\n" + read("src/garage.js") + "\n" + read("src/store.js") + '\n// boot\nR3.init(')
