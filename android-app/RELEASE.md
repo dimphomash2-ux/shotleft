@@ -1,4 +1,4 @@
-# Sho't Left! — Release guide (2.17.0, versionCode 21700)
+# Sho't Left! — Release guide (2.18.0, versionCode 21800)
 
 ## 1. One-time setup (your computer)
 
@@ -26,7 +26,7 @@
 | Orientation | `sensorLandscape` | The game is landscape; tablets keep landscape |
 | Edge-to-edge | `adjustMarginsForEdgeToEdge: auto` + CSS safe-area insets | Compulsory on Android 16 |
 | Back | Capacitor App `backButton` → the game's back map | Predictive back on Android 16; never an accidental exit |
-| versionCode | major×10000 + minor×100 + patch (2.17.0 → 21700) | From `package.json` version; bump it there |
+| versionCode | major×10000 + minor×100 + patch (2.18.0 → 21800) | From `package.json` version; bump it there |
 
 ## 3. 16 KB page-size check
 
@@ -38,7 +38,7 @@ If any `.so` appears, run Android Studio's APK Analyzer on it (it flags 16 KB al
 
 ## 4. When you type BUILD
 
-1. Bump `version` in `package.json` (e.g. 2.17.1). `npm run release-config` turns it into the version code.
+1. Bump `version` in `package.json` (e.g. 2.18.1). `npm run release-config` turns it into the version code.
 2. `npm run sync`
 3. `npm run bundle` → `android/app/build/outputs/bundle/release/app-release.aab` (upload this to Play)
 4. `npm run apk` → `android/app/build/outputs/apk/release/app-release.apk` (for testing on phones)
