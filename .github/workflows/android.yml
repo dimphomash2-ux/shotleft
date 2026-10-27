@@ -3,6 +3,8 @@
 # the signed .aab for Google Play) appear under the run's Artifacts.
 name: Build Android
 on: { workflow_dispatch: {} }
+permissions:
+  contents: write
 jobs:
   android:
     runs-on: ubuntu-latest
@@ -50,3 +52,10 @@ jobs:
           path: |
             android-app/android/app/build/outputs/apk/**/*.apk
             android-app/android/app/build/outputs/bundle/release/*.aab
+      - name: Keep the APK on the apk-builds branch (easy to fetch with git)
+        shell: bash
+        run: |
+          mkdir /tmp/out && cp android-app/android/app/build/outputs/apk/debug/app-debug.apk /tmp/out/shotleft-debug.apk
+          cd /tmp/out && git init -q -b apk-builds && git add shotleft-debug.apk
+          git -c user.name="github-actions" -c user.email="actions@github.com" commit -q -m "APK from run ${{ github.run_number }}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" apk-builds
