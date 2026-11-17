@@ -5,7 +5,7 @@ import base64, pathlib, re, sys
 ROOT = pathlib.Path(__file__).parent
 FONTS = ROOT / "fonts"
 src = (ROOT / "original-2.9.1.html").read_text()
-VERSION = "2.18.0"
+VERSION = "2.19.0"
 
 def b64(p, mime): return f"data:{mime};base64," + base64.b64encode(p.read_bytes()).decode()
 def read(p): return (ROOT / p).read_text()
@@ -287,6 +287,42 @@ once('_debug: { LEN,', '_debug: { taxis, MO, camV, LEN,')
 # the turn banner's letters settle one by one
 once('const b = $("#banner"); b.innerHTML = `<div class="bt">${esc(title)}</div>', 'const b = $("#banner"); let li = 0; b.innerHTML = `<div class="bt">${String(title).split(" ").map(w => `<span class="bw">${[...w].map(ch => `<i style="--i:${li++}">${esc(ch)}</i>`).join("")}</span>`).join(" ")}</div>')
 
+# ===================== Phase 12: board look (2.19) — worn tar, rain potholes, corner kerbs, jacarandas, haze =====================
+once('  // ---------------- districts ----------------\n', read("src/r3-look.js") + '  // ---------------- districts ----------------\n')
+once('    props.length = 0; staticVersion++;\n    city3();', '    roadDress();\n    props.length = 0; staticVersion++;\n    city3();')
+once('    for (const g of ground) { const xs = g.pts.map(p => p[0])', '    puddleGlints(out);\n    for (const g of ground) { const xs = g.pts.map(p => p[0])')
+once('    // light grade\n    if (loadshed)', '    paintHaze(loadshed);\n    // light grade\n    if (loadshed)')
+for key, hz in [("classic: { sun:", "[255, 232, 200, 0.30]"), ("golden:  { sun:", "[255, 196, 140, 0.34]"), ("night:   { sun:", "[30, 40, 100, 0.40]"), ("toy:     { sun:", "[255, 238, 215, 0.24]")]:
+    once(key, key.replace("{ sun:", "{ haze: " + hz + ", sun:"))
+
+once("""    S_(prismFaces(circle(x, y, 0.7 * s, 7), 0.5 * s, 0.62 * s, PAL.jacaranda, "#b496de", { topScale: 0.55 }));
+    addShadow(circle(x, y, 0.6 * s, 6), 1.1 * s);""", """    S_(prismFaces(circle(x, y, 0.08 * s, 5), 0.55 * s, 0.35 * s, PAL.trunk, null, { topScale: 0.6 }));
+    S_(prismFaces(circle(x, y, 0.68 * s, 9), 0.62 * s, 0.34 * s, PAL.jacaranda, "#b99be3", { topScale: 0.82 }));
+    for (let i = 0; i < 3; i++) { const a = i * 2.1 + x * 3.1, ox = Math.cos(a) * 0.3 * s, oy = Math.sin(a) * 0.3 * s; S_(prismFaces(circle(x + ox, y + oy, 0.36 * s, 7), 0.92 * s, 0.26 * s, i % 2 ? "#a283d2" : "#8f6cc0", "#c3a8ea", { topScale: 0.6 })); }
+    addShadow(circle(x, y, 0.62 * s, 7), 1.2 * s);""")
+# ground palette: paved city and dry veld instead of all-over terracotta (closer to the reference board art)
+once('ground: ["#b86c3e", "#c97f4c"]', 'ground: ["#9f9a63", "#b0a872"]')
+once('ground: ["#a9572e", "#cf7f47"]', 'ground: ["#8f7046", "#b58b58"]')
+once('ground: ["#ffa95e", "#ffc283"]', 'ground: ["#e8c48c", "#f2d4a2"]')
+once('decal(roundRect(0, 0, A - ROAD_W / 2 - 0.35, B - ROAD_W / 2 - 0.35, RC - ROAD_W / 2 - 0.35), "#c98352", { z: 0.004 });', 'decal(roundRect(0, 0, A - ROAD_W / 2 - 0.35, B - ROAD_W / 2 - 0.35, RC - ROAD_W / 2 - 0.35), "#cbb894", { z: 0.004 });')
+once('decal(rectPoly(px, py, PX - 0.2, PY - 0.2), r < 0.5 ? "#cf8c5c" : "rgba(126,166,75,.65)", { z: 0.004 });', 'decal(rectPoly(px, py, PX - 0.2, PY - 0.2), r < 0.5 ? "#cfae80" : "rgba(126,166,75,.75)", { z: 0.004 });')
+# solar panels on some kasi roofs (high quality only)
+once("""    if (k % 5 === 3) leanRoof(x, y, w, d, h, 0.32, yaw, roof, wall); else gableRoof(x, y, w, d, h, 0.48, yaw, roof, wall);
+  }""", """    if (k % 5 === 3) leanRoof(x, y, w, d, h, 0.32, yaw, roof, wall); else { gableRoof(x, y, w, d, h, 0.48, yaw, roof, wall); if (quality === "high" && k % 3 === 1) solarPanel(x, y, w, d, h, 0.48, yaw); }
+  }
+  function solarPanel(x, y, w, d, z, rise, yaw) {   // a dark panel lying on the front slope of a gable roof
+    const c = Math.cos(yaw), s = Math.sin(yaw), hd = d / 2 + 0.1, P = (lx, ly) => V(x + lx * c - ly * s, y + lx * s + ly * c, z + rise * (1 - Math.abs(ly) / hd) + 0.03);
+    S_(face([P(-w * 0.32, -hd * 0.8), P(w * 0.18, -hd * 0.8), P(w * 0.18, -hd * 0.2), P(-w * 0.32, -hd * 0.2)], "#26375a", { out: V(0, 0, 1), bias: -0.06, detail: { type: "stripes", n: 4, color: "rgba(160,190,230,.35)" } }));
+  }""")
+# launch splash: the board art drifts slowly behind the logo (Reduce Motion keeps it still)
+import base64 as _b64
+_art = _b64.b64encode((ROOT / "art" / "splash-board.webp").read_bytes()).decode()
+once('<div id="launch" class="shl" aria-hidden="true"><div class="shl__glow"></div>',
+     '<style>.shl__art{position:absolute;inset:-4%;background:#1b1c21 url(data:image/webp;base64,' + _art + ') center/cover no-repeat;opacity:0;transform:scale(1.04);filter:blur(1.5px) saturate(1.1)}'
+     '.shl__art::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 46%,rgba(20,14,10,.35) 0%,rgba(20,14,10,.72) 60%,rgba(14,12,14,.92) 100%)}'
+     '.shl.is-open .shl__art{opacity:1;transform:scale(1.12) translateY(-1.5%);transition:opacity calc(500ms * var(--sl-speed)) ease-out,transform 6s cubic-bezier(.2,.6,.3,1)}'
+     'html.reduced .shl.is-open .shl__art{transform:scale(1.04);transition:opacity 200ms}</style>'
+     '<div id="launch" class="shl" aria-hidden="true"><div class="shl__art"></div><div class="shl__glow"></div>')
 # modules: strings, design-system helpers + Style Guide, shell; then boot through the shell
 once('// boot\nR3.init(', read("src/strings.js") + "\n" + read("src/styleguide.js") + "\n" + read("src/shell.js") + "\n" + read("src/setup.js") + "\n" + read("src/ingame.js") + "\n" + read("src/juice.js") + "\n" + read("src/results.js") + "\n" + read("src/learn.js") + "\n" + read("src/garage.js") + "\n" + read("src/store.js") + '\n// boot\nR3.init(')
 once('renderIntro(); screen("splash"); orient();', 'Shell.boot(); orient();\nif (location.hash === "#styleguide") StyleGuide.open("intro");')

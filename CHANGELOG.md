@@ -1,5 +1,18 @@
 # Sho't Left — Changelog
 
+## 2.19.0 — Board look (18 Nov 2026)
+Presentation only: rules, money, dice and positions are unchanged. Built toward the board art made in Higgsfield.
+- **Ground**: the city is paved and the land around it is dry veld, instead of terracotta everywhere. All four looks (Day, Sunset, Night, Bright) were retuned.
+- **Road**:
+  - worn tar with patches, cracks and oil stains where taxis stand at the ranks
+  - a dozen potholes full of rainwater, kept clear of the stops, traffic lights and space lines
+  - on High graphics, a slow glint and ripple moves across each puddle (off with Reduce Motion)
+- **Kerbs**: red-and-white kerbs on all four corners.
+- **Trees and roofs**: jacaranda trees now look like trees, with a trunk and a clumpy lilac crown, and a row of them lines the outer verge. Some township roofs have solar panels (High graphics).
+- **Haze**: the far city fades into warm air at the top of the screen (off on Low graphics).
+- **Launch screen**: the board art drifts slowly behind the logo (it stays still with Reduce Motion).
+- **Performance**: the extra detail is part of the cached still city. On a 4× CPU-throttled test, drive frame rate matched 2.18 within noise.
+
 ## 2.18.0 — Motion direction (27 Oct 2026)
 Presentation only: rules, money, dice and positions are unchanged. Fast Mode scales the timings. Reduce Motion turns all of this off. The plan, with the options weighed for each moment, is in `MOTION.md`.
 - **Camera**: a critically damped spring on every axis, so it never stops dead between moves.
