@@ -1,5 +1,13 @@
 # Sho't Left — Changelog
 
+## 2.20.0 — The middle of the board (18 Nov 2026)
+Presentation only: rules, money, dice and positions are unchanged. The inner city was rebuilt toward the reference board art.
+- **Taxi rank**: the small kiosk became a big rank, with two long striped canopies (mint, coral and teal), 12 white minibuses reversed into marked bays, a loading lane between them and the TAXI RANK gantry on top.
+- **Park**: four big jacaranda trees around the fountain.
+- **Shops**: a row of bright two-storey shops with striped awnings and rooftop water tanks, facing a small car park with palms, now fills the right side of the middle.
+- **Hospital**: white minibuses dropping people off out front.
+- **Performance**: drive frame rate matched 2.19 on a 4× CPU-throttled test.
+
 ## 2.19.0 — Board look (18 Nov 2026)
 Presentation only: rules, money, dice and positions are unchanged. Built toward the board art made in Higgsfield.
 - **Ground**: the city is paved and the land around it is dry veld, instead of terracotta everywhere. All four looks (Day, Sunset, Night, Bright) were retuned.

@@ -1,4 +1,4 @@
-# Sho't Left! — Release guide (2.19.0, versionCode 21900)
+# Sho't Left! — Release guide (2.20.0, versionCode 22000)
 
 ## 1. One-time setup (your computer)
 

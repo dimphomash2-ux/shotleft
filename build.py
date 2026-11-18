@@ -5,7 +5,7 @@ import base64, pathlib, re, sys
 ROOT = pathlib.Path(__file__).parent
 FONTS = ROOT / "fonts"
 src = (ROOT / "original-2.9.1.html").read_text()
-VERSION = "2.19.0"
+VERSION = "2.20.0"
 
 def b64(p, mime): return f"data:{mime};base64," + base64.b64encode(p.read_bytes()).decode()
 def read(p): return (ROOT / p).read_text()
@@ -323,6 +323,15 @@ once('<div id="launch" class="shl" aria-hidden="true"><div class="shl__glow"></d
      '.shl.is-open .shl__art{opacity:1;transform:scale(1.12) translateY(-1.5%);transition:opacity calc(500ms * var(--sl-speed)) ease-out,transform 6s cubic-bezier(.2,.6,.3,1)}'
      'html.reduced .shl.is-open .shl__art{transform:scale(1.04);transition:opacity 200ms}</style>'
      '<div id="launch" class="shl" aria-hidden="true"><div class="shl__art"></div><div class="shl__glow"></div>')
+# ===================== Phase 13: inner city (2.20) — big striped rank, shop row, jacaranda park, hospital minibuses =====================
+once('  // ---------------- districts ----------------\n', read("src/r3-city.js") + '  // ---------------- districts ----------------\n')
+once('    taxiRank(-7.25, 0);\n', '    bigRank(-7.25, 0);\n')
+once("""    [[6.4, 1.3], [7.4, -1.2]].forEach(([x, y], k) => (k % 2 ? treeAcacia(x, y, 0.8) : treeRound(x, y, 0.85, k)));
+    stall(7.6, 0.1, 0, 2); car(5.6, -0.8, Math.PI, 5); jojo(8.6, 1.4, 0.9);""", """    shopRow3(7.2, 0);""")
+once("[[-3.2, 1.1], [-2.6, -1.2], [2.6, 1.2], [3.3, -1.0]].forEach(([x, y], k) => (k % 2 ? jacaranda(x, y, 0.9) : treeRound(x, y, 0.85, k)));",
+     "[[-3.15, 1.0, 1.35], [-2.7, -1.1, 1.15], [2.7, 1.1, 1.2], [3.2, -0.95, 1.4]].forEach(([x, y, s]) => jacaranda(x, y, s));   // big jacarandas round the fountain")
+once("    for (const x of [-4.1, 4.1]) treeRound(cx + x, cy - 2.3, 0.8, x); bench(cx + 0.9, cy - 0.9, 0);",
+     "    for (const x of [-4.1, 4.1]) treeRound(cx + x, cy - 2.3, 0.8, x); bench(cx + 0.9, cy - 0.9, 0);\n    for (const [x, k] of [[-0.95, 0], [-0.25, 1], [0.45, 2]]) minibus(cx + x, cy - 1.75, Math.PI / 2, k);   // minibuses dropping off at the hospital")
 # modules: strings, design-system helpers + Style Guide, shell; then boot through the shell
 once('// boot\nR3.init(', read("src/strings.js") + "\n" + read("src/styleguide.js") + "\n" + read("src/shell.js") + "\n" + read("src/setup.js") + "\n" + read("src/ingame.js") + "\n" + read("src/juice.js") + "\n" + read("src/results.js") + "\n" + read("src/learn.js") + "\n" + read("src/garage.js") + "\n" + read("src/store.js") + '\n// boot\nR3.init(')
 once('renderIntro(); screen("splash"); orient();', 'Shell.boot(); orient();\nif (location.hash === "#styleguide") StyleGuide.open("intro");')
